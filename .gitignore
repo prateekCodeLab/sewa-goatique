@@ -6,3 +6,7 @@ coverage/
 *.log
 .env*
 !.env.example
+sewa.db
+sewa.db-shm
+sewa.db-wal
+uploads/
