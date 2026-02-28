@@ -66,7 +66,7 @@ export default function Admin() {
   const navigate = useNavigate();
 
   const fetchData = () => {
-    const token = localStorage.getItem("adminToken");
+    const token = localStorage.getItem("token");
     if (!token) {
       navigate("/admin/login");
       return;
@@ -101,7 +101,7 @@ export default function Admin() {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("adminToken");
+    const token = localStorage.getItem("token");
     if (!token) return;
 
     fetch(`${import.meta.env.VITE_API_URL}/api/content/site_branding`)
@@ -113,7 +113,7 @@ export default function Admin() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("adminToken");
+    localStorage.removeItem("token");
     navigate("/admin/login");
   };
 
@@ -126,7 +126,7 @@ export default function Admin() {
 
     setIsUploading(true);
     try {
-      const token = localStorage.getItem("adminToken");
+      const token = localStorage.getItem("token");
       const res = await fetch(`${API}/api/upload`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
@@ -162,7 +162,7 @@ export default function Admin() {
     formData.append("image", e.target.files[0]);
 
     try {
-      const token = localStorage.getItem("adminToken");
+      const token = localStorage.getItem("token");
       const res = await fetch(`${API}/api/upload`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
@@ -196,7 +196,7 @@ export default function Admin() {
     e.preventDefault();
     setCmsStatus("saving");
     try {
-      const token = localStorage.getItem("adminToken");
+      const token = localStorage.getItem("token");
       const res = await fetch(`${API}/api/content/homepage_hero`, {
         method: "POST",
         headers: {
@@ -219,7 +219,7 @@ export default function Admin() {
   const handleAddPost = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("adminToken");
+      const token = localStorage.getItem("token");
       const res = await fetch(`${API}/api/posts`, {
         method: "POST",
         headers: {
@@ -259,7 +259,7 @@ export default function Admin() {
   const handleDeletePost = async (id: number) => {
     if (!confirm("Are you sure you want to delete this post?")) return;
     try {
-      const token = localStorage.getItem("adminToken");
+      const token = localStorage.getItem("token");
       const res = await fetch(`${API}/api/posts/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
@@ -273,7 +273,7 @@ export default function Admin() {
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("adminToken");
+      const token = localStorage.getItem("token");
       const res = await fetch(`${API}/api/products`, {
         method: "POST",
         headers: {
@@ -310,7 +310,7 @@ export default function Admin() {
   const handleDeleteProduct = async (id: number) => {
     if (!confirm("Are you sure you want to delete this product?")) return;
     try {
-      const token = localStorage.getItem("adminToken");
+      const token = localStorage.getItem("token");
       const res = await fetch(`${API}/api/products/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
@@ -323,7 +323,7 @@ export default function Admin() {
 
   const handleUpdateOrderStatus = async (id: number, status: string) => {
     try {
-      const token = localStorage.getItem("adminToken");
+      const token = localStorage.getItem("token");
       const res = await fetch(`${API}/api/orders/${id}/status`, {
         method: "PUT",
         headers: {
@@ -755,7 +755,7 @@ export default function Admin() {
                     <button
                       type="button"
                       onClick={async () => {
-                        const token = localStorage.getItem("adminToken");
+                        const token = localStorage.getItem("token");
 
                         await fetch(`${API}/api/content/site_branding`, {
                           method: "POST",
@@ -1114,7 +1114,7 @@ export default function Admin() {
                       formData.append("image", file);
                       setIsUploading(true);
                       try {
-                        const token = localStorage.getItem("adminToken");
+                        const token = localStorage.getItem("token");
                         const res = await fetch(`${API}/api/upload`, {
                           method: "POST",
                           headers: { Authorization: `Bearer ${token}` },

@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { motion, AnimatePresence } from "motion/react";
+import { API_BASE } from "../lib/api";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -29,7 +30,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const [branding, setBranding] = useState<any>(null);
 
   useEffect(() => {
-    fetch("/api/content/site_branding")
+    fetch(`${API_BASE}/api/content/site_branding`)
       .then((res) => res.json())
       .then((data) => setBranding(data))
       .catch(() => setBranding(null));
@@ -41,7 +42,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     e.preventDefault();
     setStatus("submitting");
     try {
-      const res = await fetch("/api/messages", {
+      const res = await fetch(`${API_BASE}/api/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

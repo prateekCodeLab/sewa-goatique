@@ -211,7 +211,7 @@ if (productCount.count === 0) {
 
 async function startServer() {
   const app = express();
-  const PORT = process.env.PORT || 3000;
+  const PORT = Number(process.env.PORT) || 3000;
 
   app.use(express.json());
   app.use(cors({
@@ -480,7 +480,7 @@ async function startServer() {
     app.use(express.static(join(__dirname, 'dist')));
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
+  app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
   });
 }
