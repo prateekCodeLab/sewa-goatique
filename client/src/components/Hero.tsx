@@ -11,7 +11,7 @@ export default function Hero() {
   });
 
   useEffect(() => {
-    fetch('/api/content/homepage_hero')
+    fetch(`${API_BASE}/api/content/homepage_hero')
       .then(res => res.json())
       .then(data => {
         if (data.headline) setContent(data);

@@ -14,7 +14,7 @@ export default function Home() {
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   useEffect(() => {
-    fetch('/api/products')
+    fetch(`${API_BASE}/api/products')
       .then(res => res.json())
       .then(data => setFeaturedProducts(data.slice(0, 4)))
       .catch(err => console.error('Failed to fetch products', err));
@@ -24,7 +24,7 @@ export default function Home() {
     e.preventDefault();
     setStatus('submitting');
     try {
-      const res = await fetch('/api/messages', {
+      const res = await fetch(`${API_BASE}/api/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

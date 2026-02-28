@@ -19,7 +19,7 @@ export default function Blog() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/posts')
+    fetch(`${API_BASE}/api/posts')
       .then(res => res.json())
       .then(data => {
         // Filter only published posts for the public view

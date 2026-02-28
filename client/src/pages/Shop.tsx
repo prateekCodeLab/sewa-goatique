@@ -11,7 +11,7 @@ export default function Shop() {
   const [sort, setSort] = useState('featured');
 
   useEffect(() => {
-    fetch('/api/products')
+    fetch(`${API_BASE}/api/products')
       .then(res => res.json())
       .then(data => {
         setProducts(data);
