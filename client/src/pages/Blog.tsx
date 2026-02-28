@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, User, ArrowRight } from 'lucide-react';
 import SEO from '../components/SEO';
+import { API_BASE } from '../lib/api';
 
 interface BlogPost {
   id: number;
@@ -19,7 +20,7 @@ export default function Blog() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${API_BASE}/api/posts')
+    fetch(`${API_BASE}/api/posts`)
       .then(res => res.json())
       .then(data => {
         // Filter only published posts for the public view

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import { Product } from '../context/CartContext';
 import { Filter } from 'lucide-react';
+import { API_BASE } from '../lib/api';
 
 export default function Shop() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -11,14 +12,14 @@ export default function Shop() {
   const [sort, setSort] = useState('featured');
 
   useEffect(() => {
-    fetch(`${API_BASE}/api/products')
-      .then(res => res.json())
-      .then(data => {
-        setProducts(data);
-        setFilteredProducts(data);
-      })
-      .catch(err => console.error('Failed to fetch products', err));
-  }, []);
+  fetch(`${API_BASE}/api/products`)
+    .then(res => res.json())
+    .then(data => {
+      setProducts(data);
+      setFilteredProducts(data);
+    })
+    .catch(err => console.error('Failed to fetch products', err));
+}, []);
 
   useEffect(() => {
     let result = [...products];

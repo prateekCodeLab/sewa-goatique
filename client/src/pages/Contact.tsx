@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
+import { API_BASE } from '../lib/api';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -15,7 +16,7 @@ export default function Contact() {
     setStatus('submitting');
     
     try {
-      const res = await fetch(`${API_BASE}/api/messages', {
+      const res = await fetch(`${API_BASE}/api/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

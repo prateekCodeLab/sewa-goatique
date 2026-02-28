@@ -7,6 +7,7 @@ import Star from '../components/Star';
 import { Product } from '../context/CartContext';
 import { motion } from 'motion/react';
 import SEO from '../components/SEO';
+import { API_BASE } from '../lib/api';
 
 export default function Home() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
@@ -14,7 +15,7 @@ export default function Home() {
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   useEffect(() => {
-    fetch(`${API_BASE}/api/products')
+    fetch(`${API_BASE}/api/products`)
       .then(res => res.json())
       .then(data => setFeaturedProducts(data.slice(0, 4)))
       .catch(err => console.error('Failed to fetch products', err));
@@ -24,7 +25,7 @@ export default function Home() {
     e.preventDefault();
     setStatus('submitting');
     try {
-      const res = await fetch(`${API_BASE}/api/messages', {
+      const res = await fetch(`${API_BASE}/api/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

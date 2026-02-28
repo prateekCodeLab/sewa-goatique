@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
+import { API_BASE } from '../lib/api';
 
 export default function Hero() {
   const [content, setContent] = useState({
@@ -11,7 +12,7 @@ export default function Hero() {
   });
 
   useEffect(() => {
-    fetch(`${API_BASE}/api/content/homepage_hero')
+    fetch(`${API_BASE}/api/content/homepage_hero`)
       .then(res => res.json())
       .then(data => {
         if (data.headline) setContent(data);

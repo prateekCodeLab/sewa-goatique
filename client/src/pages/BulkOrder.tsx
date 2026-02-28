@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Package, Building, Users, CheckCircle } from 'lucide-react';
+import { API_BASE } from '../lib/api';
 
 export default function BulkOrder() {
   const [formData, setFormData] = useState({
@@ -17,7 +18,7 @@ export default function BulkOrder() {
     setStatus('submitting');
     
     try {
-      const res = await fetch(`${API_BASE}/api/messages', {
+      const res = await fetch(`${API_BASE}/api/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
