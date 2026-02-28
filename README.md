@@ -1,36 +1,37 @@
-# SEWA Goatique
+# SEWA Goatique
 
 > **Handmade goat‑milk skincare e‑commerce with a built‑in CMS & admin dashboard.**
 
 *Developed by Prateek Kumar*
 
-
-This repository powers the SEWA Goatique storefront and backend: a full‑stack
-React + Vite frontend coupled with an Express/SQLite API. The application is
-crafted for a social‑enterprise selling artisanal goat milk soaps and skincare
-while empowering rural women artisans.
+This repository powers the SEWA Goatique storefront and backend: a full‑stack React + Vite frontend coupled with an Express/SQLite API. The application is crafted for a social‑enterprise selling artisanal goat milk soaps and skincare while empowering rural women artisans.
 
 ---
 
-## 🚀 Features
+## 🚀 Features (updated)
 
-- **Public storefront** with:
-  - Home, Shop, Product Detail, Cart, Checkout, Contact, Bulk Order, Track
-    Order and Blog pages
-  - Filterable / sortable product catalogue
-  - Persistent client‑side cart (localStorage)
-  - Newsletter signup, contact/bulk enquiry forms
-  - Markdown‑powered blog with excerpts and images
-- **Admin panel** protected by JWT login:
-  - Manage products, orders, user messages, blog posts and site content
-  - Upload images (multer) & adjust branding (logo, favicon, hero image)
-  - View dashboard statistics, change order statuses
-- **Backend API** (Express) handling:
-  - CRUD for products, orders, messages, content and posts
-  - File uploads (`/api/upload`)
-  - Email notifications via Nodemailer (order confirmations, enquiries)
-  - SQLite database (`better-sqlite3`) with initial seed data
-- **Full TypeScript support** on both client and server.
+- **Public storefront**
+  - Home, Shop, Product Detail, Cart, Checkout, Contact, Bulk Order, Track Order and Blog pages
+  - Filterable / sortable catalogue with “Featured” sorting option
+  - Products support multiple images, category tags, ingredients, benefits, stock count and featured flag
+  - Schema‑org JSON‑LD and meta tags for SEO
+  - Persistent cart stored in `localStorage`
+  - Newsletter signup, contact/bulk inquiry forms with confirmation emails
+  - Markdown‑powered blog; posts can be drafted or published via admin
+- **Admin dashboard** (JWT auth)
+  - Full CRUD for products (including stock levels), orders, messages, blog posts and dynamic content
+  - Upload images via `/api/upload` (multer)
+  - Customize branding: logo, favicon, hero image and logo heights for desktop/mobile
+  - Dashboard statistics, change order statuses, view messages
+  - Optional utilities such as logo generation script
+- **Backend API**
+  - Express + SQLite with WAL journaling
+  - Automatic seeding and a users table for admin credentials
+  - Endpoints for managing products, orders (with `payment_method` field), messages, site content (`homepage_hero`, `site_branding`), and blog posts (`published` flag)
+  - Emails sent via Nodemailer on order creation and contact/bulk messages
+  - Uploads served from `/uploads`; `BASE_URL` config influences URLs
+  - Logging of uncaught exceptions/rejections to `server.log`
+- **Full TypeScript support** on both sides; linting via `tsc --noEmit`.
 
 ---
 
@@ -39,13 +40,13 @@ while empowering rural women artisans.
 | Layer            | Technology                    |
 |------------------|-------------------------------|
 | Frontend         | React 18, Vite, TypeScript    |
-| Styling          | Tailwind CSS + lucide-react  |
+| Styling          | Tailwind CSS + lucide-react   |
 | Backend          | Node.js, Express, TypeScript  |
 | Database         | SQLite (better-sqlite3)       |
 | File handling    | multer                        |
 | Authentication   | JWT (jsonwebtoken)            |
 | Email            | nodemailer                    |
-| Utilities        | clsx, motion, react-markdown, etc.
+| Utilities        | clsx, motion, react-markdown, etc. |
 
 ---
 
@@ -53,17 +54,27 @@ while empowering rural women artisans.
 
 ```
 /                root of repo
-│  package.json   # scripts & dependencies
-│  server.ts      # Express entrypoint with Vite middleware
-│  sewa.db        # SQLite database (created at runtime)
-│  uploads/       # files uploaded via admin panel
+│  CHECKLIST.md          # feature tracker
+│  README.md             # this file
 │
-└── src/
-    ├── components/      # reusable React UI pieces
-    ├── context/         # CartContext & types
-    ├── pages/           # each route's screen
-    ├── lib/             # application utilities
-    └── main.tsx & App.tsx  # react-router setup
+├─ client/               # React/Vite frontend
+│   ├─ package.json
+│   ├─ tsconfig.json
+│   ├─ vite.config.ts
+│   ├─ public/            # static assets (logo.png if generated)
+│   ├─ generate_logo.ts   # optional GenAI script to create a logo
+│   └─ src/
+│       ├─ components/    # reusable UI pieces
+│       ├─ context/       # CartContext & types
+│       ├─ pages/         # route screens
+│       ├─ lib/           # api and auth helpers
+│       └─ main.tsx & App.tsx
+│
+└─ server/               # Express API
+    ├─ package.json
+    ├─ server.ts         # entrypoint, Vite middleware, routes
+    ├─ uploads/          # stored by multer
+    └─ sewa.db (generated)
 ```
 
 ---
@@ -77,129 +88,165 @@ while empowering rural women artisans.
 
 ### Install dependencies
 
+Dependencies are managed separately for server and client.
+
 ```bash
-npm install
+# server
+cd server && npm install
+# client
+cd client && npm install
 ```
 
 ### Environment variables
 
-Copy `env.example` (if available) or create a `.env` file at the project root with
-these values:
+Create a `.env` at the project root with the following values (server):
 
 ```env
-JWT_SECRET=your_jwt_secret        # used by server for admin tokens
+JWT_SECRET=your_jwt_secret        # admin token signing
 ADMIN_PASSWORD=admin123            # initial admin password (hashed on start)
 SMTP_HOST=smtp.example.com         # email transport
 SMTP_PORT=587
 SMTP_USER=user
 SMTP_PASS=pass
 SMTP_FROM="SEWA Goatique <noreply@sewagoatique.com>"
+BASE_URL=https://your-production-domain.com  # used to build upload URLs
 ```
 
-Setting `ADMIN_PASSWORD` is recommended in development so you can log into the
-admin dashboard. You may also override the seeded products/content by editing
-`server.ts`.
+Client variables live in `client/.env` or are prefixed with `VITE_`
+
+```env
+VITE_API_URL=http://localhost:3000  # API base when developing
+GEMINI_API_KEY=...                  # optional, for logo generation script
+```
+
+> **Note:** never commit `.env` files; change secrets before deployment.
 
 ### Running locally
 
-```
-npm run dev        # transpiles & starts server with Vite middleware
+Start both projects in separate shells:
+
+```bash
+# API server
+cd server
+npm run dev
+
+# frontend
+cd ../client
+npm run dev
 ```
 
-- Frontend available at `http://localhost:3000`.
-- API endpoints under `/api`.
+- Frontend: http://localhost:3000  
+- API: proxied under `/api` or directly at  http://localhost:3000/api
 
 For a production build:
 
+```bash
+cd client && npm run build    # outputs to client/dist
+cd ../server && npm start     # serves build and API
 ```
-npm run build      # compile TS, build client bundle
-npm start          # run built server
+
+### Generating a logo (optional)
+
+Run `client/generate_logo.ts` using tsx or node once you set `GEMINI_API_KEY`:
+
+```bash
+cd client
+node generate_logo.ts  # or npx tsx generate_logo.ts
 ```
+
+Result is saved to `client/public/logo.png`.
 
 ### Resetting the database
 
-The SQLite file `sewa.db` lives in the project root. Delete it and restart the
-server to recreate the schema and reseed the default data.
+Remove `server/sewa.db` and restart the server; the schema is recreated
+and sample data (admin user, example products/content) is seeded.
 
 ---
 
 ## 📦 API Overview
 
-Most endpoints are prefixed with `/api`.
+Base URL defaults to `http://localhost:3000/api`.
 
-### Public
+### Public endpoints
 
-- `GET /api/products` – list all products
-- `GET /api/products/:slug` – product detail
-- `POST /api/orders` – create order (sends confirmation email)
-- `POST /api/messages` – save contact/bulk/newsletter message
-- `GET /api/content/:key` – retrieve dynamic page content
-- `GET /api/posts` – list blog posts
-- `GET /api/posts/:slug` – fetch single post
+- `GET /products` – list all products (images parsed as arrays)
+- `GET /products/:slug` – retrieve product by slug
+- `POST /orders` – place an order; expects customer details, items array,
+  `payment_method`; confirmation email is sent
+- `POST /messages` – save contact/bulk/newsletter message and email
+- `GET /content/:key` – dynamic page content (e.g. `homepage_hero`)
+- `GET /posts` – list blog posts
+- `GET /posts/:slug` – fetch a single post
 
-### Protected (requires JWT in `Authorization: Bearer …`)
+### Protected (requires JWT in `Authorization: Bearer …` header)
 
-- `POST /api/admin/login` – obtain token using username/password
-- `POST /api/upload` – file upload
-- CRUD routes for products, orders, messages, content, posts
-- `PUT /api/orders/:id/status` – update order status
+- `POST /admin/login` – obtain token using username/password (`admin`)
+- `POST /upload` – upload image (field name `image`)
+- CRUD routes for `/products`, `/orders`, `/messages`, `/content/:key`,
+  `/posts`
+- `PUT /orders/:id/status` – change order status
 
-Refer to `server.ts` for full implementation and payload shapes.
+Refer to `server/server.ts` for payload shapes and additional details.
 
 ---
 
 ## 🧾 Frontend Highlights
 
-- Routing handled by `react-router-dom`.
-- Global cart stored via `CartContext` and persisted to
-  `localStorage`.
-- Pages render data by calling API endpoints; forms POST back to `/api`.
-- Admin UI is a single‑page dashboard (`/admin/*` routes) that consumes the
-  same API.
-- Tailwind configuration lives in `tailwind.config.ts` (not shown, default
-  setup).
+- React routing with `react-router-dom`; admin area under `/admin`.
+- `CartContext` maintains global cart state with localStorage persistence.
+- Shop page supports sorting by price or featured flag; product cards show
+  stock availability.
+- Product detail includes ingredients/benefits, schema‑org metadata,
+  and zoomable images.
+- SEO component injects meta tags and JSON‑LD.
+- Admin UI for managing all content; supports file uploads and branding
+  settings.
+- Tailwind CSS with responsive, accessible UI.  
 
 ---
 
 ## 🔐 Admin Panel
 
-1. Start the server.
-2. Visit `http://localhost:3000/admin/login`.
-3. Use credentials `admin` / value-of-`ADMIN_PASSWORD` (defaults to `admin123`).
+1. Start server & frontend.
+2. Open `http://localhost:3000/admin/login`.
+3. Login with `admin` / `ADMIN_PASSWORD` (default `admin123`).
 
-The dashboard lets you:
+Features:
 
-- View orders & change status
-- Add/edit/delete products and blog posts
-- Read contact/bulk/newsletter messages
-- Customize homepage headline/subheadline/CTA
-- Upload branding assets (logo, favicon, hero image)
+- Orders: list, view details, update status
+- Products: create/edit/delete; stock and category management
+- Messages: view contact/bulk/newsletter submissions
+- Blog: manage posts, set published state
+- Content: edit homepage hero, site branding (logo, favicon, hero image)
+- Branding: adjust logo height for desktop/mobile
 
-Token is stored in `localStorage` and included automatically in requests by
-client code.
+Tokens are stored in `localStorage` and auto‑attached to requests. Logout
+clears the token.
 
 ---
 
 ## 📦 Deployment
 
-- Build client with `npm run build`.
-- Ensure environment variables are set in the production environment.
-- Run `npm start`; server listens on port `3000` by default.
-- Serve the `dist` directory or adapt to your hosting provider (e.g. Heroku,
-  DigitalOcean, etc.).
+1. Build client (`cd client && npm run build`).
+2. Export environment variables in production.
+3. Start server (`cd server && npm start`).
+4. Ensure `uploads/` directory is writable and accessible.
+5. Optionally front with Nginx/PM2/systemd.
 
-> ⚠️ Change `JWT_SECRET` and `ADMIN_PASSWORD` before deploying!
+> ⚠️ Change secrets (`JWT_SECRET`, `ADMIN_PASSWORD`) before public
+> deployment. Consider migrating uploads to cloud storage and enabling HTTPS.
 
 ---
 
 ## 🤝 Contributing
 
-This project is primarily for demonstration / internal use. To extend it:
+This project is a demonstration / learning platform. To contribute:
 
-1. Fork and clone the repository.
-2. Create a feature branch (`git checkout -b feature/thing`).
-3. Add tests or manual instructions if you modify functionality.
-4. Submit a pull request describing your changes.
+1. Fork the repo and clone locally.
+2. Create a feature branch (`git checkout -b feature/xyz`).
+3. Add tests or manual instructions for any functionality changes.
+4. Run `npm run lint` (client) and ensure TypeScript compiles.
+5. Submit a pull request with a clear description.
 
-Please maintain code quality by running `npm run lint` and respecting TypeScript
-checks.
+See `CHECKLIST.md` for planned enhancements and outstanding tasks.
+
