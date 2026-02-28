@@ -1,3 +1,4 @@
+import cors from "cors";
 import express from "express";
 import { createServer as createViteServer } from "vite";
 import { fileURLToPath } from 'url';
@@ -213,6 +214,10 @@ async function startServer() {
   const PORT = process.env.PORT || 3000;
 
   app.use(express.json());
+  app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  credentials: true
+}));
   
   // Serve uploaded files
   app.use('/uploads', express.static(uploadsDir));
@@ -251,7 +256,8 @@ async function startServer() {
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
-    const fileUrl = `/uploads/${req.file.filename}`;
+    const baseUrl = process.env.BASE_URL || `https://sewa-goatique-api.onrender.com`;
+    const fileUrl = `${baseUrl}/uploads/${req.file.filename}`;
     res.json({ url: fileUrl });
   });
 

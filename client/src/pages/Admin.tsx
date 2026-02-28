@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+const API = import.meta.env.VITE_API_URL;
+
 export default function Admin() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [orders, setOrders] = useState<any[]>([]);
@@ -70,27 +72,27 @@ export default function Admin() {
       return;
     }
 
-    fetch("/api/orders")
+    fetch(`${import.meta.env.VITE_API_URL}/api/orders`)
       .then((res) => res.json())
       .then((data) => setOrders(data))
       .catch((err) => console.error("Failed to fetch orders", err));
 
-    fetch("/api/products")
+    fetch(`${import.meta.env.VITE_API_URL}/api/products`)
       .then((res) => res.json())
       .then((data) => setProducts(data))
       .catch((err) => console.error("Failed to fetch products", err));
 
-    fetch("/api/messages")
+    fetch(`${import.meta.env.VITE_API_URL}/api/messages`)
       .then((res) => res.json())
       .then((data) => setMessages(data))
       .catch((err) => console.error("Failed to fetch messages", err));
 
-    fetch("/api/posts")
+    fetch(`${import.meta.env.VITE_API_URL}/api/posts`)
       .then((res) => res.json())
       .then((data) => setPosts(data))
       .catch((err) => console.error("Failed to fetch posts", err));
 
-    fetch("/api/content/homepage_hero")
+    fetch(`${import.meta.env.VITE_API_URL}/api/content/homepage_hero`)
       .then((res) => res.json())
       .then((data) => {
         if (data.headline) setHomepageContent(data);
@@ -102,7 +104,7 @@ export default function Admin() {
     const token = localStorage.getItem("adminToken");
     if (!token) return;
 
-    fetch("/api/content/site_branding")
+    fetch(`${import.meta.env.VITE_API_URL}/api/content/site_branding`)
       .then((res) => res.json())
       .then((data) => {
         if (data) setBrandingContent(data);
@@ -125,7 +127,7 @@ export default function Admin() {
     setIsUploading(true);
     try {
       const token = localStorage.getItem("adminToken");
-      const res = await fetch("/api/upload", {
+      const res = await fetch(`${API}/api/upload`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
@@ -161,7 +163,7 @@ export default function Admin() {
 
     try {
       const token = localStorage.getItem("adminToken");
-      const res = await fetch("/api/upload", {
+      const res = await fetch(`${API}/api/upload`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
@@ -175,7 +177,7 @@ export default function Admin() {
         [field]: data.url,
       };
 
-      await fetch("/api/content/site_branding", {
+      await fetch(`${API}/api/content/site_branding`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -195,7 +197,7 @@ export default function Admin() {
     setCmsStatus("saving");
     try {
       const token = localStorage.getItem("adminToken");
-      const res = await fetch("/api/content/homepage_hero", {
+      const res = await fetch(`${API}/api/content/homepage_hero`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -218,7 +220,7 @@ export default function Admin() {
     e.preventDefault();
     try {
       const token = localStorage.getItem("adminToken");
-      const res = await fetch("/api/posts", {
+      const res = await fetch(`${API}/api/posts`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -258,7 +260,7 @@ export default function Admin() {
     if (!confirm("Are you sure you want to delete this post?")) return;
     try {
       const token = localStorage.getItem("adminToken");
-      const res = await fetch(`/api/posts/${id}`, {
+      const res = await fetch(`${API}/api/posts/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -272,7 +274,7 @@ export default function Admin() {
     e.preventDefault();
     try {
       const token = localStorage.getItem("adminToken");
-      const res = await fetch("/api/products", {
+      const res = await fetch(`${API}/api/products`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -309,7 +311,7 @@ export default function Admin() {
     if (!confirm("Are you sure you want to delete this product?")) return;
     try {
       const token = localStorage.getItem("adminToken");
-      const res = await fetch(`/api/products/${id}`, {
+      const res = await fetch(`${API}/api/products/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -322,7 +324,7 @@ export default function Admin() {
   const handleUpdateOrderStatus = async (id: number, status: string) => {
     try {
       const token = localStorage.getItem("adminToken");
-      const res = await fetch(`/api/orders/${id}/status`, {
+      const res = await fetch(`${API}/api/orders/${id}/status`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -755,7 +757,7 @@ export default function Admin() {
                       onClick={async () => {
                         const token = localStorage.getItem("adminToken");
 
-                        await fetch("/api/content/site_branding", {
+                        await fetch(`${API}/api/content/site_branding`, {
                           method: "POST",
                           headers: {
                             "Content-Type": "application/json",
@@ -1113,7 +1115,7 @@ export default function Admin() {
                       setIsUploading(true);
                       try {
                         const token = localStorage.getItem("adminToken");
-                        const res = await fetch("/api/upload", {
+                        const res = await fetch(`${API}/api/upload`, {
                           method: "POST",
                           headers: { Authorization: `Bearer ${token}` },
                           body: formData,
