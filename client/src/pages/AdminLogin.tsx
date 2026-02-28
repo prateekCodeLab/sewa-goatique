@@ -18,7 +18,7 @@ export default function AdminLogin() {
       });
       const data = await res.json();
       if (data.success) {
-        localStorage.setItem('adminToken', data.token);
+        localStorage.setItem('token', data.token);
         navigate('/admin');
       } else {
         setError('Invalid password');
